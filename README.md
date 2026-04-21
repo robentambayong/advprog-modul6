@@ -18,3 +18,6 @@ The refactoring in this milestone introduces routing to our web server. By readi
 
 The `/sleep` route simulates a slow, heavy operation by pausing the thread for 10 seconds. Because our current server is single-threaded, it processes incoming connections sequentially. When a request hits the `/sleep` endpoint, the entire main thread halts. If a second request comes in (even to the fast `/` route) while the server is sleeping, it must wait in line until the first 10-second request finishes. This clearly demonstrates the major bottleneck of single-threaded architecture: a single slow request blocks all other users from accessing the server.
 
+## Commit 5 Reflection notes
+
+To solve the blocking issue, I implemented a `ThreadPool` to handle concurrency. Instead of spawning a brand-new thread for every single request (which could overwhelm the system and lead to a Denial of Service), the thread pool creates a fixed number of worker threads waiting for tasks. I use a channel (`mpsc`) to send closures (jobs) from the main thread to the workers. To allow multiple workers to safely listen to the same receiver, I wrap it in an `Arc<Mutex<Receiver>>`. Now, when a slow request comes in, one worker handles it, leaving the other workers instantly available to process subsequent requests concurrently.
