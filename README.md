@@ -8,3 +8,8 @@ The updated `handle_connection` function now actively responds to the client ins
 
 ![Commit 2 screen capture](assets/images/commit2.png)
 
+## Commit 2 Reflection notes
+
+The refactoring in this milestone introduces routing to our web server. By reading just the first line of the HTTP request, the server can determine exactly what the client is asking for. We use an `if/else` block (or `match`) to check if the request line is exactly `GET / HTTP/1.1`. If it is, the server responds with the `200 OK` status and the `hello.html` file. For any other request, it selectively responds with a `404 NOT FOUND` status and a `404.html` error page. This split is necessary so that the server behaves correctly according to HTTP standards, rather than blindly returning the same page regardless of the requested URL.
+
+![Commit 3 screen capture](assets/images/commit3.png)
